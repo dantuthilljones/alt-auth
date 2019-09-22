@@ -10,7 +10,8 @@ corresponding error code. Any other response code returned by the subrequest is 
 
 alt-auth uses a signed cookie as an authentication token. A new authentication cookie is set when an incoming POST
 request has a `X-IS-LOGIN` header set to `true` and the `password` parameter matches the password. The password and auth
-token duration are configurable.
+token duration are configurable. Without the `X-IS-LOGIN` header set to `true`, alt-auth will respond appropriately
+according to the validity of the auth token.
 
 This project also includes a static web page which can be used as the log in form.
 
