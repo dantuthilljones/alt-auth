@@ -10,8 +10,8 @@ corresponding error code. Any other response code returned by the subrequest is 
 
 alt-auth uses a signed cookie as an authentication token. A new authentication cookie is set when an incoming POST
 request has a `X-IS-LOGIN` header set to `true` and the `password` parameter matches the password. The password and auth
-token duration are configurable. Without the `X-IS-LOGIN` header set to `true`, alt-auth will respond appropriately
-according to the validity of the auth token.
+token duration are configurable. Without the `X-IS-LOGIN` header set to `true`, alt-auth expects to recieve subrequests 
+from nginx and will will respond appropriately according to the validity of the auth token.
 
 This project also includes a static web page which can be used as the log in form.
 
@@ -19,19 +19,19 @@ This project also includes a static web page which can be used as the log in for
 
 ### Prerequisites
 
-* This webservice written in Java and requires at least **JRE 8**
-* The auth request module is was introduced in version **nginx 1.5.4**
+* **JRE 8+** is required because alt-auth written in Java 
+* **nginx 1.5.4+** is required for the auth request module
 
 ### Installing The Service
 
 I suggest running this as a systemd based linux service because I don't know how to use any other service manager. This
 also means I only provide instructions for systemd based linux systems.
 
-1. Create a directory for the executable and config file to live
+1. Create a directory for the executable and config file to live. Use a different directory to me if you like
 
     `sudo mkdir /usr/local/alt-auth`
 
-2. Copy the `alt-auth.jar` file in to your folder
+2. Copy `alt-auth.jar` in to your folder
 
     `sudo cp alt-auth.jar /usr/local/alt-auth/alt-auth.jar`
 
@@ -70,9 +70,9 @@ There are several configuration mechanisms which we need for alt-auth to functio
 
 #### Pass Login Messages To Alt-Auth
 
-alt-auth will set an authentication cookie if a request has the `X-IS-LOGIN` header set to `true`. To use this, we need
+alt-auth will handle login requests if a request has the `X-IS-LOGIN` header set to `true`. To use this, we need
 an endpoint for the login page to send the passwords to. Use this config to configure the `/login` endpoint to pass
-requests to alt-auth (on port 8765) and set the `X-IS-LOGIN` header appropriately.
+requests to alt-auth and set the `X-IS-LOGIN` header appropriately.
 
 ```
 location = /login {
@@ -96,41 +96,55 @@ location = /auth {
 
 #### Configure Sensitive Endpoints To Authenticate Via Alt-Auth
 
-Adding this config line to any endpoint will cause nginx to send an authentication subrequest to the specified location.
+Adding this config line to any endpoint will cause nginx to send an authentication subrequest to the internal
+authentication endpoint we just created.
 
 ```
-auth_request /auth;
+auth_request /auth; # Send an authentication subrequest to /auth
 ```
 
-For example, this will protect `/private`
+For example, this config will add authentication to `/private`.
 
 ```
 location /private {
-    auth_request /auth;
+    auth_request /auth; # Send an authentication subrequest to /auth
 }
 ```
 
 #### Configure Sensitive Endpoints To Redirect To Login Page
 
-Instead of displaying a 401 or 403 error page, we can redirect the user to a login page. To do this, we first need a
-redirection endpoint. These begin with `@`. We will configure it to redirect to a login page at
-`/login.html`.
+When authentication failes, instead of displaying a 401 or 403 error page, we can redirect the user to a login page. To
+do this, we first need a redirection endpoint. We will configure it to redirect to a login page at `/login.html`.
 
 ```
 location @redirectlogin {
-    return 302 /login.html;
+    return 302 /login.html; # Redirect to /login.html
 }
 ```
 
 Next we need to configure our server to respond with this redirection endpoint when the authentication fails. The
 following lines of config will tell nginx to respond with our redirection endpoint when nginx would normally respond
-with a HTTP code of 401 or 403. To keep it simple, you can place these on the server level of your config however this
-will cause all 401 and 403 responses from all endpoints to redirect with your login page. If this causes issues with
-other parts of your site you can place this config on each of your sensitive endpoints.
+with a HTTP code of 401 or 403.
 
 ```
-error_page 401 = @redirectlogin;
-error_page 403 = @redirectlogin;
+error_page 401 = @redirectlogin; # Set the 401 error page to @redirectlogin
+error_page 403 = @redirectlogin; # Set the 403 error page to @redirectlogin
+```
+
+To keep it simple, you can place this config on the server level however this will cause all 401 and 403 responses from
+all endpoints to redirect with your login page. If this causes issues with other parts of your site you can place this
+config inside the section for each of your sensitive endpoints.
+
+```
+
+error_page 401 = @redirectlogin; # Set the server wide 401 error page to @redirectlogin
+error_page 403 = @redirectlogin; # Set the server wide 403 error page to @redirectlogin
+
+location /private {
+    auth_request /auth;
+    error_page 401 = @redirectlogin; # Set the 401 error page to @redirectlogin for the /private endpoint
+    error_page 403 = @redirectlogin; # Set the 403 error page to @redirectlogin for the /private endpoint
+}
 ```
 
 ### Installing Login Page
