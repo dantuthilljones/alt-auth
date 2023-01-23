@@ -1,8 +1,8 @@
 package me.detj.alt;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.experimental.UtilityClass;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @UtilityClass

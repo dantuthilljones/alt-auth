@@ -1,15 +1,15 @@
 package me.detj.alt.handler;
 
 import com.lambdaworks.crypto.SCryptUtil;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import me.detj.alt.Util;
 import me.detj.alt.config.Config;
 import org.apache.commons.lang3.SerializationUtils;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.security.PrivateKey;
 import java.security.Signature;
 import java.util.Base64;
