@@ -26,5 +26,5 @@ jobs:
       - name: Upload Build
         uses: actions/upload-artifact@v3
         with:
-          name: Jar With Dependencies
+          name: Jar
           path: target/alt-auth-1.0-SNAPSHOT.jar
