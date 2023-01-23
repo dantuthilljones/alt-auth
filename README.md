@@ -162,7 +162,7 @@ Finally copy the contents of the `html` folder to your website's root directory 
 
 ### Configuration File
 
-alt-auth requires a YAML config file with three fields: `port`, `password` and `duration`
+alt-auth requires a YAML config file with the fields: `passwordHash`, `port`, `duration`, `cookieNameAuth`, `cookieNameSignature`
 
 #### Password
 
@@ -198,15 +198,25 @@ method.
 
 The `port` field is the port number for the service to run on. For no particular reason, I use `8765`.
 
+#### cookieNameAuth
+
+The `cookieNameAuth` field is the name of the cookie used to store the authentication token. It is configurable to avoid conflicts with any services running behind the reverse proxy
+
+#### cookieNameSignature
+
+The `cookieNameSignature` field is the name of the cookie used to store the authentication token's signature. It is configurable to avoid conflicts with any services running behind the reverse proxy
+
 #### Example
 
-The following config file configures this service to run on port `8765`, authenticate against the password `password`
+The following config file configures this service to run on port `8765`, authenticate against the password `test`
 and create auth tokens which are valid for 30 days.
 
 ```
+passwordHash: $s0$e1001$Dt0OO7+K+3MsxrhLSJSFkw==$c3NL5dazJtReXqha/G/HbnPnIdkp2r0520X2yc6XUEs=
 port: 8765
-password: $s0$e1001$98QjB5j7DQjgG1/mFQm0Sg==$vwd7GDkXYvtEP/+l2tpM5zriancNurACHTGjKYdTYhI=
 duration: P30D
+cookieNameAuth: alt-auth-auth
+cookieNameSignature: alt-auth-sig
 ```
 
 ## To Do List
