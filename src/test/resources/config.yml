@@ -1,0 +1,5 @@
+passwordHash: $s0$e1001$Dt0OO7+K+3MsxrhLSJSFkw==$c3NL5dazJtReXqha/G/HbnPnIdkp2r0520X2yc6XUEs=
+port: 8765
+duration: P30D
+cookieNameAuth: alt-auth-auth
+cookieNameSignature: alt-auth-sig
