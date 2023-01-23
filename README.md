@@ -19,13 +19,12 @@ This project also includes a static web page which can be used as the log in for
 
 ### Prerequisites
 
-* **JRE 8+** is required because alt-auth written in Java 
+* **JRE 17+** is required because alt-auth written in Java 
 * **nginx 1.5.4+** is required for the auth request module
 
 ### Installing The Service
 
-I suggest running this as a systemd based linux service because I don't know how to use any other service manager. This
-also means I only provide instructions for systemd based linux systems.
+I suggest running this as a systemd based linux service because I have already written instructions for it.
 
 1. Create a directory for the executable and config file to live. Use a different directory to me if you like
 
