@@ -61,7 +61,7 @@
         password: $('#password-input').val()
       }
     }).done(function(response) {
-      if(response == "Auth cookie set."){
+      if(response == "Password OK."){
         window.location.href = successfulLoginRedirect;
       } else {
         console.log("Unexpected Error");
